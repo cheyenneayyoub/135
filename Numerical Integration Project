@@ -1,1 +1,70 @@
+a = 0;
+b = 1;
+n = 20;
+h = (b-a)/n;
+f = @(x) x*exp(-x);
+format long
+
+%composite trapezoidal rule
+sum = 0;
+for i = 1:1:n-1
+  x(i)=a+i*h;
+  y(i)=f(x(i));
+  sum=sum+y(i);
+end
+
+trap_answer=h/2*(f(a)+f(b)+2*sum)
+
+
+%1/3 simpson's rule
+odd=0;even=0;
+for i = 1:1:n-1
+  x(i)=a+i*h;
+  y(i)=f(x(i));
+  if rem(i,2)==1
+       odd=odd+y(i);
+else
+       even=even+y(i);
+end end
+
+simp_answer=h/3*(f(a)+f(b)+4*odd+2*even)
+
+
+%exact solution
+syms x
+expr = x.*exp(-x);
+F = int(expr,[0 1]);
+exact = 1 - 2*exp(-1)
+
+
+%composite Gaussian quadrature rule with two points
+gauss_quad_answer = gauss_quad(f,a,b,n)
+function y = gauss_quad(func,a,b,n)
+h = (b-a)/n;
+y = 0;
+for i = 1:n
+    y = y+gauss2(func,a+(i-1)*h,a+i*h);
+end end
+function x = gauss2(func,a,b)
+j=(((a+b)/2)-sqrt(1/3)*((b-a)/2));
+k=(((a+b)/2)+sqrt(1/3)*((b-a)/2));
+   1
+   x=((b-a)/2)*(feval(func,j) + feval(func,k));
+end
+
+
+%the best method is gaussian quadrature method because it differs from
+ the exact by 3x10^-9 and the worst is the
+%composite trapezoid method because it differs from the exact by
+%2.08314x10^-4
+
+
+%trap_answer =
+%   0.264032803976830
+%simp_answer =
+%   0.264241039074082
+%exact =
+%   0.264241117657115
+%gauss_quad_answer =
+%   0.264241120932522
 
